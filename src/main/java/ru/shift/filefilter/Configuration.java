@@ -3,6 +3,7 @@ package ru.shift.filefilter;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -23,20 +24,51 @@ public class Configuration {
             String arg = args[i];
             switch (arg) {
                 case "-o":
-                    config.setOutputDirectory(Paths.get(args[++i]));
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("Для опции -о необходимо указать путь к директории.");
+                    }
+                    String outputDirStr = args[++i];
+                    if (outputDirStr.equals("-p") || outputDirStr.equals("-a") || outputDirStr.equals("-s") ||
+                            outputDirStr.equals("-f")) {
+                        throw new IllegalArgumentException("Для опции -о необходимо указать путь к директории.");
+                    }
+                    Path outputDir = Paths.get(outputDirStr);
+                    if (!Files.exists(outputDir)) {
+                        throw new IllegalArgumentException("Неверно указан путь: " + outputDirStr);
+                    }
+                    if (!Files.isDirectory(outputDir)) {
+                        throw new IllegalArgumentException("Указанный путь не является директорией: " + outputDirStr);
+                    }
+                    config.setOutputDirectory(Paths.get(outputDirStr));
                     break;
+
                 case "-p":
-                    config.setPrefix(args[++i]);
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("Для опции -р необходимо указать префикс.");
+                    }
+                    String prefixStr = args[++i];
+                    if (prefixStr.equals("-o") || prefixStr.equals("-a") || prefixStr.equals("-s") ||
+                            prefixStr.equals("-f")) {
+                        throw new IllegalArgumentException("Для опции -р необходимо указать префикс.");
+                    }
+                    if (prefixStr.matches(".*[\\\\/|:?<>*\"].*")) {
+                        throw new IllegalArgumentException("Введен недопустимый символ для префикса. Недопустимые символы: \\ / | : ? < > \" *");
+                    }
+                    config.setPrefix(prefixStr);
                     break;
+
                 case "-a":
                     config.setAppend(true);
                     break;
+
                 case "-s":
                     config.setStatsOption(StatsOption.SHORT);
                     break;
+
                 case "-f":
                     config.setStatsOption(StatsOption.FULL);
                     break;
+
                 default:
                     if (arg.startsWith("-")) {
                         throw new IllegalArgumentException("Неизвестная опция: " + arg);

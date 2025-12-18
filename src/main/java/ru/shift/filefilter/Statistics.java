@@ -8,11 +8,11 @@ import java.util.DoubleSummaryStatistics;
 
 @Getter
 public class Statistics {
-    private final List<Integer> integers = new ArrayList<>();
+    private final List<Long> integers = new ArrayList<>();
     private final List<Double> floats = new ArrayList<>();
     private final List<String> strings = new ArrayList<>();
 
-    public void addInteger(int value) {
+    public void addInteger(long value) {
         integers.add(value);
     }
 
@@ -34,7 +34,7 @@ public class Statistics {
 
         if (!integers.isEmpty()) {
             IntSummaryStatistics intStats = integers.stream()
-                .mapToInt(Integer::intValue)
+                .mapToInt(Long::intValue)
                 .summaryStatistics();
             stats.append(String.format("Целые числа (count = %d): min = %d, max = %d, sum = %d, average = %.2f%n",
                     intStats.getCount(), intStats.getMin(), intStats.getMax(),

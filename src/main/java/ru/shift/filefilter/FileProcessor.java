@@ -20,8 +20,6 @@ public class FileProcessor {
 
     public void processFiles() throws IOException {
         try {
-            Files.createDirectories(config.getOutputDirectory());
-
             for (Path inputFile : config.getInputFiles()) {
                 if (!Files.exists(inputFile)) {
                     System.err.println("Файл - " + inputFile + " не найден.");
@@ -67,7 +65,7 @@ public class FileProcessor {
             integersFound = true;
         }
 
-        int value = Integer.parseInt(line);
+        long value = Long.parseLong(line);
         stats.addInteger(value);
         integerWriter.write(line);
         integerWriter.newLine();
